@@ -1,0 +1,31 @@
+# Root
+.DS_Store
+*.log
+.env
+.env.local
+_git_info.txt
+_push_result.txt
+smoke-results.txt
+frontend-build.txt
+
+# Python
+.venv/
+**/__pycache__/
+**/*.pyc
+backend/.venv/
+backend/**/__pycache__/
+backend/data/
+backend/models/*.pt
+backend/models/*.onnx
+!backend/models/.gitkeep
+
+# Node
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
