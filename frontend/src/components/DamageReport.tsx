@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Download, Link2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { trackEvent } from '../lib/analytics'
 import { downloadDamagePdf } from '../lib/pdf'
 import { copyText } from '../lib/share'
 import {
@@ -37,6 +38,7 @@ export function DamageReport({
     setPdfLoading(true)
     try {
       await downloadDamagePdf(result, { filename, imageDataUrl })
+      trackEvent('pdf_download', { damages: result.summary.total_damages })
       toast.success('PDF сохранён')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Не удалось создать PDF')
@@ -49,6 +51,7 @@ export function DamageReport({
     const url = shareUrl || window.location.href
     try {
       await copyText(url)
+      trackEvent('share_click')
       toast.success('Ссылка скопирована — откроет запись и сравнение до/после')
     } catch {
       toast.error('Не удалось скопировать ссылку')

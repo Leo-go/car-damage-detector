@@ -11,6 +11,7 @@ import {
   listHistory,
   updateHistoryItem,
 } from '../lib/history'
+import { trackEvent } from '../lib/analytics'
 import {
   buildHistoryShareUrl,
   copyText,
@@ -138,6 +139,7 @@ export function HistoryPage() {
     })
     try {
       await copyText(url)
+      trackEvent('compare_share')
       toast.success('Ссылка на сравнение скопирована')
     } catch {
       toast.error('Не удалось скопировать ссылку')

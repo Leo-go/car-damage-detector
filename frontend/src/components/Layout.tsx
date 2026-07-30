@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { History, ScanSearch } from 'lucide-react'
+import { History, Info, ScanSearch } from 'lucide-react'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -21,7 +21,7 @@ export function Layout() {
             Car Damage Detector
           </h1>
         </div>
-        <nav className="flex items-center gap-1 rounded-full border border-line bg-surface-raised/80 p-1 backdrop-blur">
+        <nav className="flex flex-wrap items-center gap-1 rounded-full border border-line bg-surface-raised/80 p-1 backdrop-blur">
           <NavLink to="/" end className={linkClass}>
             <ScanSearch className="h-4 w-4" />
             Детекция
@@ -30,9 +30,19 @@ export function Layout() {
             <History className="h-4 w-4" />
             История
           </NavLink>
+          <NavLink to="/about" className={linkClass}>
+            <Info className="h-4 w-4" />
+            О проекте
+          </NavLink>
         </nav>
       </header>
       <Outlet />
+      <footer className="mt-auto pt-10 text-center text-xs text-ink-muted">
+        Car Damage Detector · MVP demo ·{' '}
+        <NavLink to="/about" className="underline-offset-2 hover:text-accent hover:underline">
+          About
+        </NavLink>
+      </footer>
     </div>
   )
 }

@@ -1,18 +1,31 @@
 # Car Damage Detector
 
-CV-система для детекции повреждений автомобилей по фото (React + FastAPI).
+CV-система для детекции повреждений автомобилей по фото.
+
+**Live demo (Vercel):** после деплоя frontend · **API** — отдельно на Render/Railway.
+
+## Возможности
+
+- Загрузка фото (drag & drop) + progress bar
+- Детекция: царапины / вмятины / разбитые элементы
+- Bounding boxes, severity, оценка ремонта
+- PDF-отчёт и share-ссылки с сравнением до/после
+- История в `localStorage`
+- Страница [`/about`](./frontend/src/pages/AboutPage.tsx)
+- Analytics (Vercel Analytics + Speed Insights, optional)
 
 ## Структура
 
 ```
 car-damage-detector/
-├── frontend/     # React + TypeScript + Tailwind (Vite) → Vercel
-├── backend/      # FastAPI + OpenCV / YOLO / Roboflow / HF → Render/Railway
-├── DEPLOY.md     # Инструкция деплоя frontend на Vercel
+├── frontend/              # React + TS + Tailwind → Vercel
+├── backend/               # FastAPI + OpenCV/YOLO → Render/Railway
+├── .github/workflows/ci.yml
+├── DEPLOY.md
 └── README.md
 ```
 
-## Быстрый старт (WSL)
+## Быстрый старт
 
 ### Frontend
 
@@ -20,53 +33,55 @@ car-damage-detector/
 cd frontend
 npm install
 cp .env.example .env
-# для local+proxy можно оставить VITE_API_URL пустым
+# VITE_API_URL=   # пусто = Vite proxy на localhost:8000
 npm run dev
 ```
 
-UI: http://localhost:5173
+Откройте http://localhost:5173
 
 ### Backend
 
 ```bash
 cd backend
-source .venv/bin/activate   # или: uv venv .venv && source .venv/bin/activate
-uv pip install fastapi==0.109.0 uvicorn==0.27.0 opencv-python-headless==4.9.0.80 \
-  pillow==10.2.0 python-multipart==0.0.6 pydantic-settings==2.1.0 python-dotenv==1.0.1 numpy==1.26.4
+source .venv/bin/activate
 cp .env.example .env
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Docs: http://localhost:8000/docs · Health: http://localhost:8000/health
+## Environment (frontend)
 
-## Frontend features
+| Variable | Описание |
+|----------|----------|
+| `VITE_API_URL` | Базовый URL backend без `/` (обязателен на Vercel) |
+| `VITE_API_KEY` | Опционально, если на API включён ключ |
+| `VITE_ANALYTICS_ENABLED` | `true`/`false` — Vercel Analytics |
 
-- Drag & drop upload (`react-dropzone`) + progress bar
-- Bounding boxes с цветами: scratch=жёлтый, dent=оранжевый, broken=красный
-- PDF-отчёт (`jspdf`), toast-уведомления
-- История в `localStorage` + сравнение **до/после**
-- Share-ссылки: `/history?id=…&before=…&after=…` (автозагрузка сравнения)
-- Axios + retry
+## Deploy на Vercel
 
-## Deploy
+Полный гайд: **[DEPLOY.md](./DEPLOY.md)**
 
-См. подробный гайд: **[DEPLOY.md](./DEPLOY.md)**
+Кратко:
 
-Кратко для Vercel:
-
-1. Import GitHub repo
+1. Import GitHub repo в Vercel
 2. Root Directory = `frontend`
-3. Env: `VITE_API_URL=https://your-backend.example.com`
-4. На backend добавьте Vercel origin в `CORS_ORIGINS`
+3. Env: `VITE_API_URL=https://your-api.example.com`
+4. На backend: `CORS_ORIGINS=...,https://your-app.vercel.app`
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`):
+
+- frontend: `npm ci` + `npm run build`
+- backend: install deps + import check
 
 ## API
 
 | Method | Path | Описание |
 |--------|------|----------|
-| GET | `/health` | Статус API |
-| POST | `/api/detect` | Детекция по фото |
+| GET | `/health` | Health + статус модели |
+| POST | `/api/detect` | Детекция |
 | POST | `/api/report` | Текстовый отчёт |
 
-## Лицензия
+## License
 
-MIT (или уточните у владельца репозитория).
+MIT

@@ -7,6 +7,7 @@ import { ImageUploader } from '../components/ImageUploader'
 import { DamageViewer } from '../components/DamageViewer'
 import { DamageReport } from '../components/DamageReport'
 import { AnalysisSkeleton } from '../components/Skeleton'
+import { trackEvent } from '../lib/analytics'
 import { createId, fileToDataUrl, saveHistoryItem } from '../lib/history'
 import { buildHistoryShareUrl } from '../lib/share'
 import type { DetectResponse } from '../types/detection'
@@ -79,6 +80,7 @@ export function HomePage() {
     setIsDetecting(true)
     setUploadProgress(0)
     setResult(null)
+    trackEvent('detect_start', { filename: file.name })
 
     try {
       const data = await detectDamage(file, (p) => setUploadProgress(p.percent))
@@ -102,12 +104,18 @@ export function HomePage() {
         result: data,
       })
       setHistoryId(id)
+      trackEvent('detect_success', {
+        damages: data.summary.total_damages,
+        severity: data.summary.severity,
+        backend: data.meta?.backend ?? 'unknown',
+      })
       toast.success(
         data.summary.total_damages
           ? `Найдено повреждений: ${data.summary.total_damages}`
           : 'Повреждений не обнаружено',
       )
     } catch (err) {
+      trackEvent('detect_error')
       toast.error(getErrorMessage(err))
     } finally {
       setIsDetecting(false)
